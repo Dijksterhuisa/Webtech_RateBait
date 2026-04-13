@@ -16,10 +16,10 @@ def index() -> str:
     """Homepage route."""
     return render_template("home.html")
 
-@app.route("/bestemmingen")
+@app.route("/rategames")
 def bestemmingen() -> str:
     """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
-    return render_template("bestemmingen.html")
+    return render_template("rategames.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login() -> str:
