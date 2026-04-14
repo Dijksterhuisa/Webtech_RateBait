@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %} MovieMomoir - login {% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
+<div class="p-5 mb-4 bg-light rounded-3">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Dit zijn de momenteel ingeschreven gebruikers</h1>
+        <ul class="list-group list-group-flush">
+            {% for user in users %}
+            <li class="list-group-item">{{ user }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+    <!-- Formulier voor registreren-->
+
+{% endblock %}

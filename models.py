@@ -7,7 +7,7 @@ class User(db.Model):
     '''Gebruikers voor de website'''
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.string(80), nullable=False)
+    password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     # Dit linkt de reviews aan een gebruiker als autheur.
     reviews = db.relationship('Review', backref='author', lazy=True)
@@ -45,7 +45,7 @@ class Game(db.Model):
 
     def __repr__(self) -> str:
         """String representatie voor debugging."""
-        return f"dit spel is {self.title} en de url naar het hoesje is {self.cover.url}."
+        return f"dit spel is {self.title} en de url naar het hoesje is {self.cover_url}."
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,8 +64,9 @@ class Review(db.Model):
             content: commentaar bij de review
             date_posted: wanneer hij upgeload is.
         """
-        self.title = title
-        self.cover_url = cover_url
+        self.rating = rating
+        self.content = content
+        self.date_posted = date_posted
 
     def __repr__(self) -> str:
         """String representatie voor debugging."""

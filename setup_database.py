@@ -1,4 +1,5 @@
-from basic_model_app import app, db, Gebruiker
+from models import db
+from app import app
 
 # Maak database bestand en tabellen aan
 with app.app_context():
