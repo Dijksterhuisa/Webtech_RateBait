@@ -1,65 +1,143 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ game.name }} - GameVault</title>
-    <style>
-        body { background: #14181c; color: white; font-family: sans-serif; padding: 40px; }
-        .container { display: flex; gap: 40px; max-width: 1000px; margin: auto; }
-        .poster img { width: 300px; border-radius: 8px; border: 1px solid #2c3440;}
-        .details { flex-grow: 1; }
-        .review-box { background: #2c3440; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        textarea { width: 100%; height: 100px; margin-top: 10px; background: #14181c; color: white; border: 1px solid #444; padding: 10px;}
-        select, button { padding: 10px; margin-top: 10px; background: #00c030; color: white; border: none; cursor: pointer; border-radius: 4px;}
-        .review-item { border-bottom: 1px solid #444; padding: 10px 0; }
-        a.back-btn { color: #888; text-decoration: none; display: inline-block; margin-bottom: 20px;}
-        a.back-btn:hover { color: white; }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div class="container">
-        <div class="poster">
-            <a href="/" class="back-btn">&larr; Back to Search</a>
-            <img src="{{ cover_url }}" alt="{{ game.name }} Cover">
-        </div>
-        
-        <div class="details">
-            <h1>{{ game.name }}</h1>
-            <p>{{ game.summary if game.summary else "No summary available." }}</p>
+{% block title %} {{ game.name }} - RateBait {% endblock %}
 
-            <div class="review-box">
-                <h3>Log a Review</h3>
-                <form action="/game/{{ game.id }}/review" method="POST">
-                    <label>Rating:</label>
-                    <select name="rating">
-                        <option value="5">⭐⭐⭐⭐⭐ Masterpiece</option>
-                        <option value="4">⭐⭐⭐⭐ Great</option>
-                        <option value="3">⭐⭐⭐ Good</option>
-                        <option value="2">⭐⭐ Mediocre</option>
-                        <option value="1">⭐ Poor</option>
-                    </select>
-                    <textarea name="content" placeholder="Write your review here..." required></textarea>
-                    <button type="submit">Post Review</button>
-                </form>
-            </div>
+{% block content %}
+<style>
+    /* Letterboxd vibe behouden binnen Bootstrap */
+    body { background: #14181c !important; color: white; }
+    
+    /* Zorg dat alle koppen en paragrafen wit/lichtgrijs zijn */
+    h1, h2, h3, h4, h5, p {
+        color: #ffffff !important;
+    }
 
-            <div class="review-list">
-                <h3>Community Reviews</h3>
-                {% if reviews %}
-                    {% for review in reviews %}
-                    <div class="review-item">
-                        <strong>{{ review.author.username }}</strong> rated it {{ review.rating }}/5 stars
-                        <p>{{ review.content }}</p>
-                        <small style="color:#888;">{{ review.date_posted.strftime('%Y-%m-%d') }}</small>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No reviews yet. Be the first to log this game!</p>
-                {% endif %}
-            </div>
+    /* De samenvatting mag iets zachter grijs voor een mooi contrast */
+    .lead {
+        color: #cbd5e0 !important;
+    }
 
-        </div>
+    /* Tekst in de reviews specifiek aanpakken */
+    .review-item p {
+        color: #e2e8f0 !important; /* Iets minder fel wit dan de kopjes */
+        line-height: 1.6;
+    }
+
+    .text-muted {
+        color: #a0aec0 !important; /* Zorg dat 'muted' tekst nog wel zichtbaar is */
+    }
+
+    /* De labels boven je inputvelden */
+    .form-label {
+        color: #cbd5e0 !important;
+    }
+
+    /* De placeholder tekst (bijv. "Write your review here...") */
+    .form-control::placeholder {
+        color: rgb(107, 118, 133) !important; /* Iets donkerder grijs, maar nog steeds leesbaar */
+    }
+
+    .game-poster { 
+        border-radius: 8px; 
+        border: 1px solid #444; 
+        width: 100%;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .review-card {
+        background: #2c3440;
+        border: none;
+        color: white;
+    }
+
+    .form-control, .form-select {
+        background-color: #1a2129 !important;
+        border: 1px solid #444 !important;
+        color: white !important;
+    }
+
+    .btn-rate {
+        background-color: #00c030;
+        border: none;
+        font-weight: bold;
+    }
+
+    .btn-rate:hover {
+        background-color: #00a028;
+    }
+
+    .review-item {
+        border-bottom: 1px solid #333;
+        padding: 15px 0;
+    }
+
+    .star-color { color: #00c030; }
+</style>
+
+<div class="row mt-4">
+    <div class="col-md-4 mb-4">
+        <a href="{{ url_for('game.rategames') }}" class="btn btn-outline-secondary btn-sm mb-3">
+            &larr; Back to Search
+        </a>
+        <img src="{{ cover_url }}" alt="{{ game.name }}" class="game-poster">
     </div>
 
-</body>
-</html>
+    <div class="col-md-8">
+        <h1 class="display-4 fw-bold">{{ game.name }}</h1>
+        <hr class="border-secondary">
+        
+        <p class="lead text-light">
+            {{ game.summary if game.summary else "No summary available for this title." }}
+        </p>
+
+        <div class="card review-card my-5">
+            <div class="card-body">
+                <h3 class="card-title h5 mb-3">Log a Review</h3>
+                <form action="/game/{{ game.id }}/review" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">Rating</label>
+                            <select name="rating" class="form-select">
+                                <option value="5">⭐⭐⭐⭐⭐ Masterpiece</option>
+                                <option value="4">⭐⭐⭐⭐ Great</option>
+                                <option value="3" selected>⭐⭐⭐ Good</option>
+                                <option value="2">⭐⭐ Mediocre</option>
+                                <option value="1">⭐ Poor</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small text-muted">Your thoughts</label>
+                            <textarea name="content" class="form-control" rows="3" placeholder="What did you think of the gameplay, story, or graphics?" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-rate px-4">Post Review</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3 class="h5 border-bottom border-secondary pb-2 mb-4">Community Reviews</h3>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold star-color">
+                            {{ "★" * review.rating }}{{ "☆" * (5 - review.rating) }}
+                        </span>
+                        <small class="text-muted">{{ review.date_posted.strftime('%d %b %Y') if review.date_posted else 'Recently' }}</small>
+                    </div>
+                    <p class="mb-1 fw-bold">@{{ review.author.username }}</p>
+                    <p class="text-secondary small">{{ review.content }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-4 bg-dark rounded">
+                    <p class="text-muted m-0">No reviews yet. Be the first to rate this game!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,19 @@
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template, flash, request, redirect, url_for
 from wtforms import StringField, SubmitField, PasswordField
 from flask_wtf import FlaskForm
+from models import db, Game, Review, User
 from flask_sqlalchemy import SQLAlchemy
-from models import User, db
+from api import search_game, get_game_by_id, format_cover_url
+from views.game_views import game_blueprint # Importeer je blueprint
 from forms import Registratie
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+db.init_app(app)
+
+# Registreer de blueprint
+app.register_blueprint(game_blueprint)
 
 # CSRF-beveiliging vereist een secret key
 app.config['SECRET_KEY'] = 'mijngeheimesleutel'
@@ -19,8 +27,9 @@ def index() -> str:
     """Homepage route."""
     return render_template("home.html")
 
-@app.route("/rategames")
-def bestemmingen() -> str:
+
+@app.route("/registratie", methods=["GET", "POST"])
+def registratie() -> str:
     """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
     return render_template("rategames.html")
 
@@ -56,6 +65,10 @@ def users() -> str:
     
     return render_template('users.html', users=users)    
 
-if __name__ == "__main__":  
+if __name__ == "__main__": 
+    # Dit zorgt ervoor dat de tabellen worden aangemaakt als ze nog niet bestaan
+    with app.app_context():
+        db.create_all()
+        print("Database tabellen succesvol aangemaakt!")
     app.run(debug=True)
     
