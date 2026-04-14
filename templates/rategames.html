@@ -1,9 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %} MovieMomoir - bestemmingen {% endblock %}
+{% block title %} RateBait - Rate Games {% endblock %}
 
 {% block content %}
+<div class="search-section">
+    <h1 class="mb-4">Search Games</h1>
+    <form method="POST" class="d-flex justify-content-center gap-2">
+        <input type="text" name="search_query" class="search-input" placeholder="Search for a game..." value="{{ query if query }}">
+        <button type="submit" class="btn-search">Search</button>
+    </form>
+</div>
 
-<h1> Dit is placeholder content </h1>
+<div class="game-grid">
+    {% for game in games %}
+    <a href="/game/{{ game.id }}">
+        <div class="game-card">
+            <img src="{{ game.cover_url }}" alt="{{ game.name }} Cover">
+            <h3>{{ game.name }}</h3>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{# Alleen tonen als er gezocht is (query bestaat) maar er geen games zijn gevonden #}
+{% if query and not games %}
+<div class="text-center w-100 mt-5">
+    <p class="text-muted">No games found for "{{ query }}". Try another search!</p>
+</div>
+{% endif %}
 
 {% endblock %}
