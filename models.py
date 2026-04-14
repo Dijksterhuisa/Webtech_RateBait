@@ -10,6 +10,16 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     reviews = db.relationship('Review', backref='author', lazy=True)
 
+    def __init__(self, username: str, password: str, email: str):
+        """Maakt een nieuw spel aan. Dit is waarschijnlijk nooit nodig.
+        In:
+            titel: titel van het spel
+            cover_url: plaatje van het hoesje van het spel
+        """
+        self.username = username
+        self.password = password
+        self.email = email
+        
     def __repr__(self):
         return f"<User {self.username}>"
 

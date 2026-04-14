@@ -10,8 +10,6 @@ from forms import Registratie
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
-db.init_app(app)
-
 # Registreer de blueprint
 app.register_blueprint(game_blueprint)
 
@@ -26,12 +24,6 @@ db.init_app(app)
 def index() -> str:
     """Homepage route."""
     return render_template("home.html")
-
-
-@app.route("/registratie", methods=["GET", "POST"])
-def registratie() -> str:
-    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
-    return render_template("rategames.html")
 
 @app.route("/registratie", methods=["GET", "POST"])
 def registratie() -> str:
