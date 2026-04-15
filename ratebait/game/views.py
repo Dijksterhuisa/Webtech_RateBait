@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from ratebait.models import db, Game, Review, User
 from ratebait.api import search_game, get_game_by_id, format_cover_url
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 # We maken een Blueprint aan in plaats van een Flask app
 game_blueprint = Blueprint('game', __name__)
@@ -45,6 +46,7 @@ def game_detail(game_id):
     return render_template('game.html', game=game_data, cover_url=cover_url, reviews=reviews)
 
 @game_blueprint.route('/game/<int:game_id>/review', methods=['POST'])
+@login_required
 def add_review(game_id):
     rating = request.form.get('rating')
     content = request.form.get('content')
@@ -59,9 +61,10 @@ def add_review(game_id):
         db.session.add(game)
 
     # 2. Create a dummy user if one doesn't exist
-    user = User.query.first()
+    user = current_user if current_user.is_authenticated else None
     if not user:
         return "No users found. Please register an account first.", 400
+        
         # Voeg hier het password veld toe!
         #user = User(username="PlayerOne", email="player@example.com", password="dummy_password")
         #db.session.add(user)
