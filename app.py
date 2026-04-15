@@ -44,19 +44,24 @@ def registratie() -> str:
     form = RegistratieForm()
 
     if form.validate_on_submit():
-        flash("Account aangemaakt!")
-
         username = form.username.data
         password = form.password.data
-        email = form.email.data
+        email = form.email.data       
+        existing = User.query.filter_by(username=username).first()
+        
+        if existing:
+            flash("Gebruikersnaam bestaat al!", "danger")
+            return redirect(url_for("registratie"))
 
-        user = User(username,password,email)
-        db.session.add(user)
-        db.session.commit()
+        else:
+            user = User(username,password,email)
+            db.session.add(user)
+            db.session.commit()
+            flash("Account aangemaakt!", "success")
 
-        form.username.data = ""
-        form.password.data = ""
-        form.email.data = "" 
+            form.username.data = ""
+            form.password.data = ""
+            form.email.data = "" 
     
     return render_template("registratie.html", form = form, username=username, password=password, email=email)
 
@@ -73,18 +78,14 @@ def reviews() -> str:
 
 
 @app.route("/login", methods=["GET", "POST"])
-def registratie() -> str:
+def login() -> str:
     """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
-    username: str | bool = False
-    password: str | bool = False
-    email:    str | bool = False
-
     form = LoginForm()
     
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
 
-        if user and User.check_password(form.password.data):
+        if user and user.check_password(form.password.data):
             login_user(user)
             flash("Succesvol ingelogd!", "success")
             return redirect(url_for("index"))

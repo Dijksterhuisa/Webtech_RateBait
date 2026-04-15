@@ -31,7 +31,7 @@ class User(db.Model,UserMixin):
         In: Wachtwoord
         uit: Bool
         """
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password, password)
     
 class Game(db.Model):
     # Belangrijk: Geen autoincrement omdat we IGDB ID's gebruiken
