@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white">Review List</h2>
+        <a href="{{ url_for('admin.add_review') }}" class="btn btn-success">+ Add Manual Review</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-hover border-secondary">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Game</th>
+                    <th>Rating</th>
+                    <th>Content</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.id }}</td>
+                    <td>{{ review.author.username }}</td>
+                    <td>{{ review.game.title }}</td>
+                    <td class="text-warning">★ {{ review.rating }}</td>
+                    <td class="text-truncate" style="max-width: 200px;">{{ review.content }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.delete_review', id=review.id) }}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

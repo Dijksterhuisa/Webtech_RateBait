@@ -1,12 +1,11 @@
 from flask import Blueprint, render_template, abort
 from ratebait.models import User, db
 from flask import Blueprint, render_template
-# ... andere imports ...
 
 user_blueprint = Blueprint(
     'users', 
     __name__, 
-    template_folder='templates' # Relatief aan dit bestand!
+    template_folder='templates'
 )
 
 @user_blueprint.route('/profile/<int:user_id>')

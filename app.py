@@ -5,6 +5,7 @@ from ratebait.models import db, Game, Review, User
 from flask_sqlalchemy import SQLAlchemy
 from ratebait.game.views import game_blueprint
 from ratebait.users.views import user_blueprint
+from ratebait.admin.views import admin_blueprint
 from ratebait.users.forms import RegistratieForm, LoginForm
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
@@ -13,6 +14,7 @@ app = Flask(__name__, template_folder='ratebait/templates')
 # Registreer de blueprint
 app.register_blueprint(game_blueprint)
 app.register_blueprint(user_blueprint)
+app.register_blueprint(admin_blueprint)
 
 # CSRF-beveiliging vereist een secret key
 app.config['SECRET_KEY'] = 'mijngeheimesleutel'

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 card bg-dark p-4 border-secondary">
+        <h3 class="text-white">Nieuwe Review Toevoegen</h3>
+        <form method="POST">
+            {{ form.hidden_tag() }} <div class="mb-3">
+                <label class="form-label text-white">{{ form.rating.label }}</label>
+                {{ form.rating(class="form-control bg-dark text-white border-secondary") }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-white">{{ form.content.label }}</label>
+                {{ form.content(class="form-control bg-dark text-white border-secondary", rows="5") }}
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label class="form-label text-white">{{ form.user_id.label }}</label>
+                    {{ form.user_id(class="form-control bg-dark text-white border-secondary") }}
+                </div>
+                <div class="col">
+                    <label class="form-label text-white">{{ form.game_id.label }}</label>
+                    {{ form.game_id(class="form-control bg-dark text-white border-secondary") }}
+                </div>
+            </div>
+
+            {{ form.submit(class="btn btn-success w-100 mt-4") }}
+        </form>
+    </div>
+</div>
+{% endblock %}

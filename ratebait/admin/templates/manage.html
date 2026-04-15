@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="py-4">
+    <h1 class="mb-4 text-white">Admin Dashboard</h1>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">User Management</h5>
+                    <p class="card-text text-muted">View, add or edit users.</p>
+                    <a href="{{ url_for('admin.list_users') }}" class="btn btn-outline-success">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Review Control</h5>
+                    <p class="card-text text-muted">Moderate community reviews.</p>
+                    <a href="{{ url_for('admin.list_reviews') }}" class="btn btn-outline-success">Manage Reviews</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

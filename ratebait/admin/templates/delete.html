@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5 text-center">
+        <div class="card border-danger bg-dark text-white p-5">
+            <h2 class="text-danger mb-4">Confirm Delete</h2>
+            <p>Are you sure you want to delete the review for <strong>{{ review.game.title }}</strong>?</p>
+            <p class="small text-muted italic">"{{ review.content[:50] }}..."</p>
+            
+            <form action="{{ url_for('admin.confirm_delete', id=review.id) }}" method="POST">
+                <button type="submit" class="btn btn-danger px-5 me-2">Yes, Delete</button>
+                <a href="{{ url_for('admin.list_reviews') }}" class="btn btn-secondary px-5">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
