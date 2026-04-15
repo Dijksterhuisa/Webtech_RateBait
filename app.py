@@ -46,19 +46,24 @@ def registratie() -> str:
     form = RegistratieForm()
 
     if form.validate_on_submit():
-        flash("Account aangemaakt!")
-
         username = form.username.data
         password = form.password.data
-        email = form.email.data
+        email = form.email.data       
+        existing = User.query.filter_by(username=username).first()
+        
+        if existing:
+            flash("Gebruikersnaam bestaat al!", "danger")
+            return redirect(url_for("registratie"))
 
-        user = User(username,password,email)
-        db.session.add(user)
-        db.session.commit()
+        else:
+            user = User(username,password,email)
+            db.session.add(user)
+            db.session.commit()
+            flash("Account aangemaakt!", "success")
 
-        form.username.data = ""
-        form.password.data = ""
-        form.email.data = "" 
+            form.username.data = ""
+            form.password.data = ""
+            form.email.data = "" 
     
     return render_template("registratie.html", form = form, username=username, password=password, email=email)
 
@@ -73,21 +78,36 @@ def reviews() -> str:
     reviews = db.session.execute(db.select(Review)).scalars().all()
     return render_template('reviews.html', reviews=reviews)
 
-# @app.route("/login", methods=["GET", "POST"])
-# def registratie() -> str:
-#    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
-#    username: str | bool = False
-#    password: str | bool = False
-#    email:    str | bool = False
 
-#    form = LoginForm()
-   
-#    if form.validate_on_submit():
-#        user = User.query.filter_by(username=form.username.data).first()
+@app.route("/login", methods=["GET", "POST"])
+def login() -> str:
+    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
 
-#        if user and User.check_password(form.password.data):
-#            login_user(user)
-#            flash()
+        if user and user.check_password(form.password.data):
+            login_user(user)
+            flash("Succesvol ingelogd!", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("Ongeldige gebruikersnaam of wachtwoord", "danger")
+    return render_template("login.html", form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Je bent uitgelogd!", "info")
+    return redirect(url_for("index"))
+
+@app.route("/geheim")
+@login_required
+def geheim():
+    return "Alleen zichtbaar voor ingelogde gebruikers!"
+
+
 
 if __name__ == "__main__": 
     # Dit zorgt ervoor dat de tabellen worden aangemaakt als ze nog niet bestaan
