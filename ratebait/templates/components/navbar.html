@@ -7,6 +7,8 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
+
+        <!--Linkerzijde-->
         <ul class="navbar-nav">
 
           <li class="nav-item">
@@ -16,12 +18,33 @@
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/rategames' %}active{% endif %}" href="/rategames">Rate Games</a>
           </li>
-
+        </ul>
+        
+        <!--Rechterzijde-->
+        <ul class="navbar-nav ms-auto">
+          {% if current_user.is_authenticated %}
+          <!-- Dropdown met username -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="bi bi-person-fill" style="color: #ff601c;"></i> {{ current_user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{{ url_for('logout') }}">Uitloggen</a></li>
+            </ul>
+          </li>
+          
+          {% else %}
+          <!-- Als user niet is ingelogd -->
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/login' %}active{% endif %}" href="/login">Inloggen</a>
           </li>
 
-        </ul>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/registratie' %}active{% endif %}" href="/registratie">Registreren</a>
+          </li>
+          {% endif %}
+
+        </ul>           
       </div>
     </div>
 </nav>
