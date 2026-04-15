@@ -71,21 +71,40 @@ def reviews() -> str:
     reviews = db.session.execute(db.select(Review)).scalars().all()
     return render_template('reviews.html', reviews=reviews)
 
-# @app.route("/login", methods=["GET", "POST"])
-# def registratie() -> str:
-#    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
-#    username: str | bool = False
-#    password: str | bool = False
-#    email:    str | bool = False
 
-#    form = LoginForm()
-   
-#    if form.validate_on_submit():
-#        user = User.query.filter_by(username=form.username.data).first()
+@app.route("/login", methods=["GET", "POST"])
+def registratie() -> str:
+    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
+    username: str | bool = False
+    password: str | bool = False
+    email:    str | bool = False
 
-#        if user and User.check_password(form.password.data):
-#            login_user(user)
-#            flash()
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+
+        if user and User.check_password(form.password.data):
+            login_user(user)
+            flash("Succesvol ingelogd!", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("Ongeldige gebruikersnaam of wachtwoord", "danger")
+    return render_template("login.html", form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Je bent uitgelogd!", "info")
+    return redirect(url_for("index"))
+
+@app.route("/geheim")
+@login_required
+def geheim():
+    return "Alleen zichtbaar voor ingelogde gebruikers!"
+
+
 
 if __name__ == "__main__": 
     # Dit zorgt ervoor dat de tabellen worden aangemaakt als ze nog niet bestaan
