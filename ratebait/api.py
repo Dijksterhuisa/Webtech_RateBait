@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
+env_path = Path(__file__).parent / ".hidden" / ".env"
+load_dotenv(dotenv_path=env_path)
 
 IGDB_CLIENT_ID = os.getenv('IGDB_CLIENT_ID')
 IGDB_BEARER_TOKEN = os.getenv('IGDB_TOKEN')

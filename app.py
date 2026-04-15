@@ -1,14 +1,12 @@
 from flask import Flask, render_template, flash, request, redirect, url_for
 from wtforms import StringField, SubmitField, PasswordField
 from flask_wtf import FlaskForm
-from models import db, Game, Review, User
+from ratebait.models import db, Game, Review, User
 from flask_sqlalchemy import SQLAlchemy
-from api import search_game, get_game_by_id, format_cover_url
-from views.game_views import game_blueprint # Importeer je blueprint
-from forms import Registratie
+from ratebait.game.views import game_blueprint
+from ratebait.users.forms import Registratie
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app = Flask(__name__, template_folder='ratebait/templates')
 
 # Registreer de blueprint
 app.register_blueprint(game_blueprint)
@@ -56,6 +54,11 @@ def users() -> str:
     users = db.session.execute(db.select(User.username)).scalars().all()
     
     return render_template('users.html', users=users)    
+
+@app.route("/reviews", methods=["GET", "POST"])
+def reviews() -> str:
+    reviews = db.session.execute(db.select(Review)).scalars().all()
+    return render_template('reviews.html', reviews=reviews)
 
 if __name__ == "__main__": 
     # Dit zorgt ervoor dat de tabellen worden aangemaakt als ze nog niet bestaan

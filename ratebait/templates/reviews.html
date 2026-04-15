@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} RateBait - Users {% endblock %}
+
+{% block content %}
+
+<!-- Flash messages -->
+
+
+<div class="p-5 mb-4 bg-light rounded-3">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Dit zijn de momenteel geschreven reviews</h1>
+        <ul class="list-group list-group-flush">
+            {% for review in reviews %}
+            <li class="list-group-item">{{ review }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+    <!-- Formulier voor registreren-->
+
+{% endblock %}

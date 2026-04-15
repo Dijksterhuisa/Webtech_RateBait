@@ -1,2 +1,10 @@
 flask
 requests
+flask_sqlalchemy
+forms
+flask_wtf
+wtforms
+os
+dotenv
+flask_migrate
+pathlib

@@ -2,6 +2,16 @@
 .env
 venv/
 __pycache__/
+/ratebait/__pycache__/
+/ratebait/game/__pycache__/
+/ratebait/users/__pycache__/
+/ratebait/api/__pycache__/
+ratebait/models/__pycache__/
+ratebait/__init__.pyc
+ratebait/game/views.pyc
+ratebait/users/forms.pyc
+ratebait/api/api.pyc
+ratebait/.hidden/
 
 # Databases
 instance/

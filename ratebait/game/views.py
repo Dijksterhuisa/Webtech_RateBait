@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from models import db, Game, Review, User
-from api import search_game, get_game_by_id, format_cover_url
+from ratebait.models import db, Game, Review, User
+from ratebait.api import search_game, get_game_by_id, format_cover_url
 
 # We maken een Blueprint aan in plaats van een Flask app
 game_blueprint = Blueprint('game', __name__)
@@ -18,7 +18,7 @@ def rategames():
                 seen_names = set()
                 for item in raw_results:
                     name = item.get('name')
-                    if name and name not in seen_names:
+                    if name not in seen_names:
                         seen_names.add(name)
                         cover_data = item.get('cover')
                         cover_url = cover_data.get('url') if cover_data else None
@@ -61,12 +61,13 @@ def add_review(game_id):
     # 2. Create a dummy user if one doesn't exist
     user = User.query.first()
     if not user:
+        return "No users found. Please register an account first.", 400
         # Voeg hier het password veld toe!
-        user = User(username="PlayerOne", email="player@example.com", password="dummy_password")
-        db.session.add(user)
-        db.session.commit()
+        #user = User(username="PlayerOne", email="player@example.com", password="dummy_password")
+        #db.session.add(user)
+        #db.session.commit()
 
-    review = Review(rating=int(rating), content=content, user_id=user.id, game_id=game.id)
+    review = Review(rating=rating, content=content, date_posted=None, user_id=user.id, game_id=game.id)
     db.session.add(review)
     db.session.commit()
 
