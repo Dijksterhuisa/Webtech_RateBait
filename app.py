@@ -83,14 +83,15 @@ def reviews() -> str:
 def login() -> str:
     """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
     form = LoginForm()
-    
+    next_page = request.args.get("next")
+
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
 
         if user and user.check_password(form.password.data):
             login_user(user)
             flash("Succesvol ingelogd!", "success")
-            return redirect(url_for("index"))
+            return redirect(next_page) if next_page else redirect(url_for("index"))
         else:
             flash("Ongeldige gebruikersnaam of wachtwoord", "danger")
     return render_template("login.html", form=form)

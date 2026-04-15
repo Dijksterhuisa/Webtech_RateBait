@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 {% block title %} RateBait - Registratie {% endblock %}
 {% block content %}
+
+{% for message in get_flashed_messages() %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
 <form method="POST">
   {{ form.hidden_tag() }}
-  
+
         <img
           class="mb-4"
           src="{{ url_for('static', filename='logo/favicon.png') }}"
@@ -12,15 +20,15 @@
           height="57"
         />
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-        <div class="form-floating">
+        <div class="form-floating mb-2">
          {{form.username(class="form-control", id="floatingusername", placeholder="Gebruikersnaam")}}
          <label for="floatingusername">Gebruikersnaam</label>
         </div>
-        <div class="form-floating">
+        <div class="form-floating mb-3">
           {{form.password(class="form-control", id="floatingpassword", placeholder="Wachtwoord")}}
          <label for="floatingpassword">Wachtwoord</label>
         </div>
-        <button class="btn btn-primary w-100 py-2" type="submit">
+        <button class="btn btn-search w-100 py-2" type="submit">
           Sign in
         </button>
       </form>
