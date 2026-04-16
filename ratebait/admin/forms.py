@@ -15,7 +15,7 @@ class AdminReviewForm(FlaskForm):
     
     content = TextAreaField('Review Content', validators=[
         DataRequired(),
-        Length(min=5, message="De review moet minstens 5 tekens lang zijn")
+        Length(min=5, max=500, message="De review moet minstens 5 tekens lang zijn")
     ])
     
     # Optioneel: ID's handmatig koppelen (of je doet dit via de view)

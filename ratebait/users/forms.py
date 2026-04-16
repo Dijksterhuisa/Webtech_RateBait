@@ -24,7 +24,7 @@ class EditReviewForm(FlaskForm):
     
     content = TextAreaField('Jouw Review', validators=[
         DataRequired(), 
-        Length(min=10, max=500, message="Je review moet tussen de 10 en 500 tekens zijn.")
+        Length(min=5, max=500, message="Je review moet tussen de 10 en 500 tekens zijn.")
     ])
     
     submit = SubmitField('Wijzigingen Opslaan')
