@@ -1,8 +1,17 @@
+<!-- import base.html -->
 {% extends "base.html" %}
-{% block title %} RateBait - Registratie {% endblock %}
+
+
+<!-- Nieuwe titel -->
+{% block title %} RateBait - Rate Games {% endblock %}
+
+
+<!-- Content block -->
 {% block content %}
 
 
+
+<!-- Inlogformulier -->
 <form method="POST">
   {{ form.hidden_tag() }}
 
@@ -13,15 +22,26 @@
           width="72"
           height="57"
         />
+
+        <!-- Titel -->
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+
+        <!-- Gebruikersnaam veld -->
         <div class="form-floating mb-2">
          {{form.username(class="form-control", id="floatingusername", placeholder="Gebruikersnaam")}}
          <label for="floatingusername">Gebruikersnaam</label>
         </div>
+
+
+        <!-- Wachtwoord veld -->
         <div class="form-floating mb-3">
           {{form.password(class="form-control", id="floatingpassword", placeholder="Wachtwoord")}}
          <label for="floatingpassword">Wachtwoord</label>
         </div>
+
+
+        <!-- BUTTON! -->
         <button class="btn btn-search w-100 py-2" type="submit">
           Sign in
         </button>

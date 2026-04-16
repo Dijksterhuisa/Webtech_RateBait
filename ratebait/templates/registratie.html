@@ -1,8 +1,17 @@
+<!-- Imports vanuit base.html-->
 {% extends "base.html" %}
+
+
+<!-- Nieuwe Titel-->
 {% block title %} RateBait - Registratie {% endblock %}
+
+
+<!-- Inhoud-->
 {% block content %}
 
 
+
+<!-- Formulier voor registratie -->
 <form method="POST">
     {{ form.hidden_tag() }}
     
@@ -13,31 +22,31 @@
         width="72"
         height="57"
     />
-
+    <!-- titel-->
     <h1 class="h3 mb-3 fw-normal">Registreren</h1>
+
+
+    <!-- Username veld -->
     <div class="form-floating mb-1">
        {{form.username(class="form-control", id="floatingusername", placeholder="Gebruikersnaam")}}
         <label for="floatingusername">Gebruikersnaam</label>
     </div>
+
+
+    <!-- Wachtwoord veld -->
     <div class="form-floating mb-1">
        {{form.password(class="form-control", id="floatingpassword", placeholder="Wachtwoord")}}
         <label for="floatingpassword">Wachtwoord</label>
     </div>
+
+
+    <!-- Email veld -->
     <div class="form-floating">
        {{form.email(class="form-control", id="floatingemail", placeholder="Email")}}
         <label for="floatingemail">Email-adres</label>
     </div>
-    <div class="form-check text-start my-3">
-        <input
-        class="form-check-input"
-        type="checkbox"
-        value="remember-me"
-        id="checkDefault"
-        />
-        <label class="form-check-label" for="checkDefault">
-        Remember me
-        </label>
-    </div>
+
+    <!-- BUTTON -->
     <button class="btn btn-search w-100 py-2" type="submit">
         registreren
     </button>
