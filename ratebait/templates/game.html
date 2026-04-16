@@ -70,8 +70,6 @@
         border-bottom: 1px solid #333;
         padding: 15px 0;
     }
-
-    .star-color { color: #ff601c; }
 </style>
 
 <div class="row mt-4">
@@ -93,24 +91,23 @@
         <div class="card review-card my-5">
             <div class="card-body">
                 <h3 class="card-title h5 mb-3">Log a Review</h3>
-                <form action="/game/{{ game.id }}/review" method="POST">
-                    <div class="row g-3">
+                <form action="{{ url_for('game.add_review', game_id=game.id) }}" method="POST">
+                    {{ form.hidden_tag() }} <div class="row g-3">
                         <div class="col-md-4">
-                            <label class="form-label small text-muted">Rating</label>
-                            <select name="rating" class="form-select">
-                                <option value="5">⭐⭐⭐⭐⭐ Masterpiece</option>
-                                <option value="4">⭐⭐⭐⭐ Great</option>
-                                <option value="3" selected>⭐⭐⭐ Good</option>
-                                <option value="2">⭐⭐ Mediocre</option>
-                                <option value="1">⭐ Poor</option>
-                            </select>
+                            {{ form.rating.label(class="form-label small text-muted") }}
+                            {{ form.rating(class="form-select") }}
                         </div>
+                        
                         <div class="col-12">
-                            <label class="form-label small text-muted">Your thoughts</label>
-                            <textarea name="content" class="form-control" rows="3" placeholder="What did you think of the gameplay, story, or graphics?" required></textarea>
+                            {{ form.content.label(class="form-label small text-muted") }}
+                            {{ form.content(class="form-control", rows="3", placeholder="What did you think of the gameplay, story, or graphics?") }}
+                            {% for error in form.content.errors %}
+                                <span class="text-danger small">{{ error }}</span>
+                            {% endfor %}
                         </div>
+                        
                         <div class="col-12">
-                            <button type="submit" class="btn btn-rate px-4">Post Review</button>
+                            {{ form.submit(class="btn btn-rate px-4") }}
                         </div>
                     </div>
                 </form>

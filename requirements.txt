@@ -8,3 +8,5 @@ os
 dotenv
 flask_migrate
 pathlib
+email_validator
+flask_login

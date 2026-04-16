@@ -1,14 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField, PasswordField
+from wtforms import SelectField, StringField, TextAreaField, IntegerField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, NumberRange
 
 class AdminReviewForm(FlaskForm):
     """Formulier voor het handmatig toevoegen of bewerken van reviews door een admin."""
     # We gebruiken een IntegerField voor de rating (1-5)
-    rating = IntegerField('Rating (1-5)', validators=[
-        DataRequired(), 
-        NumberRange(min=1, max=5, message="Kies een score tussen 1 en 5")
-    ])
+    rating = SelectField('Rating', choices=[
+        (5, '⭐⭐⭐⭐⭐ Masterpiece'),
+        (4, '⭐⭐⭐⭐ Great'),
+        (3, '⭐⭐⭐ Good'),
+        (2, '⭐⭐ Mediocre'),
+        (1, '⭐ Poor')
+    ], coerce=int, default=3, validators=[DataRequired()])
     
     content = TextAreaField('Review Content', validators=[
         DataRequired(),
@@ -22,9 +25,8 @@ class AdminReviewForm(FlaskForm):
     submit = SubmitField('Save Review')
 
 class AdminUserForm(FlaskForm):
-    """Formulier voor het beheren van gebruikers (bijv. wachtwoord reset of email aanpassing)."""
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=80)])
+    username = StringField('Gebruikersnaam', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('New Password (leave blank to keep current)')
-    
-    submit = SubmitField('Update User')
+    password = PasswordField('Wachtwoord', validators=[DataRequired(), Length(min=6)])
+    is_admin = BooleanField('Admin Rechten') # Handig om anderen ook admin te maken
+    submit = SubmitField('Gebruiker Opslaan')

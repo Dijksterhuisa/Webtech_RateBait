@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary text-white shadow p-4">
+            <h3 class="mb-4 text-center">Review Bewerken</h3>
+            <p class="text-muted small text-center">Pas je rating of de inhoud van je review voor <strong>{{ review.game.title }}</strong> aan.</p>
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label class="form-label text-white">{{ form.rating.label }}</label>
+                    {{ form.rating(class="form-control bg-dark text-white border-secondary") }}
+                    {% for error in form.rating.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white">{{ form.content.label }}</label>
+                    {{ form.content(class="form-control bg-dark text-white border-secondary", rows="5") }}
+                    {% for error in form.content.errors %}
+                        <span class="text-danger small">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a href="{{ url_for('users.profile', user_id=current_user.id) }}" class="btn btn-outline-secondary w-50">Annuleren</a>
+                    {{ form.submit(class="btn btn-success w-50") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

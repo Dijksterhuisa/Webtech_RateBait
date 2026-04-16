@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary text-white shadow p-4">
+            <h3 class="mb-4">Review Bewerken</h3>
+            <p class="text-muted small">Pas de rating of inhoud van de review aan.</p>
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    <label class="form-label text-white">{{ form.rating.label }}</label>
+                    {{ form.rating(class="form-control bg-dark text-white border-secondary") }}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-white">{{ form.content.label }}</label>
+                    {{ form.content(class="form-control bg-dark text-white border-secondary", rows="5") }}
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label text-white">{{ form.user_id.label }}</label>
+                        {{ form.user_id(class="form-control bg-dark text-white border-secondary") }}
+                    </div>
+                    <div class="col">
+                        <label class="form-label text-white">{{ form.game_id.label }}</label>
+                        {{ form.game_id(class="form-control bg-dark text-white border-secondary") }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a href="{{ url_for('admin.list_reviews') }}" class="btn btn-outline-secondary w-50">Annuleren</a>
+                    {{ form.submit(class="btn btn-success w-50", value="Wijzigingen Opslaan") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

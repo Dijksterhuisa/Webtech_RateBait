@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, flash, render_template, request, redirect, url_for
+from .forms import ReviewForm
 from ratebait.models import db, Game, Review, User
 from ratebait.api import search_game, get_game_by_id, format_cover_url
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -42,37 +43,40 @@ def game_detail(game_id):
     
     db_game = db.session.get(Game, game_id)
     reviews = db_game.reviews if db_game else []
-
-    return render_template('game.html', game=game_data, cover_url=cover_url, reviews=reviews)
+    form = ReviewForm()
+    return render_template('game.html', game=game_data, form=form, cover_url=cover_url, reviews=reviews)
 
 @game_blueprint.route('/game/<int:game_id>/review', methods=['POST'])
-@login_required
 def add_review(game_id):
-    rating = request.form.get('rating')
-    content = request.form.get('content')
-
-    # Game ophalen of aanmaken
-    game = db.session.get(Game, game_id)
-    if not game:
-        api_game = get_game_by_id(game_id)
-        cover_data = api_game.get('cover')
-        cover_url = format_cover_url(cover_data.get('url') if cover_data else None)
-        game = Game(id=game_id, title=api_game.get('name'), cover_url=cover_url)
-        db.session.add(game)
-
-    # 2. Create a dummy user if one doesn't exist
-    user = current_user if current_user.is_authenticated else None
-    if not user:
-        return "No users found. Please register an account first.", 400
+    form = ReviewForm()
+    
+    if form.validate_on_submit():
+        game = db.session.get(Game, game_id)
+        if not game:
+            api_game = get_game_by_id(game_id)
+            cover_data = api_game.get('cover')
+            cover_url = format_cover_url(cover_data.get('url') if cover_data else None)
+            game = Game(id=game_id, title=api_game.get('name'), cover_url=cover_url)
+            db.session.add(game)
+            db.session.commit()
         
-        # Voeg hier het password veld toe!
-        #user = User(username="PlayerOne", email="player@example.com", password="dummy_password")
-        #db.session.add(user)
-        #db.session.commit()
+        user = current_user if current_user.is_authenticated else None
+        if not user:
+            flash("Je moet ingelogd zijn om een review toe te voegen.", "warning")
+            return redirect(url_for('login'))
 
-    review = Review(rating=rating, content=content, date_posted=None, user_id=user.id, game_id=game.id)
-    db.session.add(review)
-    db.session.commit()
-
-    # Let op: bij Blueprints gebruik je 'blueprintnaam.functienaam' in url_for
+        
+        new_review = Review(
+            rating=form.rating.data,
+            content=form.content.data,
+            user_id=current_user.id,
+            game_id=game.id
+        )
+        db.session.add(new_review)
+        db.session.commit()
+        flash("Je review is toegevoegd!", "success")
+    else:
+        for error in form.errors.values():
+            flash(f"Fout in review: {error[0]}", "danger")
+    
     return redirect(url_for('game.game_detail', game_id=game_id))

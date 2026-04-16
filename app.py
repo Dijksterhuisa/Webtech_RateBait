@@ -54,9 +54,16 @@ def registratie() -> str:
         if existing:
             flash("Gebruikersnaam bestaat al!", "danger")
             return redirect(url_for("registratie"))
+        if User.query.filter_by(email=email).first():
+            flash("Email bestaat al!", "danger")
+            return redirect(url_for("registratie"))
 
         else:
-            user = User(username,password,email)
+            if User.query.filter_by(id=1).first() is None:
+                is_admin = True
+            else:
+                is_admin = False
+            user = User(username,password,email,is_admin)
             db.session.add(user)
             db.session.commit()
             flash("Account aangemaakt!", "success")

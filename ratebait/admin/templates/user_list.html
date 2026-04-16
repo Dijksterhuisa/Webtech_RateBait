@@ -3,7 +3,7 @@
 <div class="py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-white">User List</h2>
-        <a href="#" class="btn btn-success">+ Add New User</a>
+        <a href="{{ url_for('admin.add_user') }}" class="btn btn-success">+ Add New User</a>
     </div>
 
     <div class="table-responsive">
@@ -13,6 +13,7 @@
                     <th>ID</th>
                     <th>Username</th>
                     <th>Email Address</th>
+                    <th>Admin Status</th>
                     <th>Total Reviews</th>
                     <th>Actions</th>
                 </tr>
@@ -20,25 +21,34 @@
             <tbody>
                 {% for user in users %}
                 <tr>
-                    <td>{{ user.id }}</td>
-                    <td><strong>{{ user.username }}</strong></td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        <span class="badge bg-secondary">
-                            {{ user.reviews|length }} reviews
-                        </span>
-                    </td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="{{ url_for('users.profile', user_id=user.id) }}" class="btn btn-sm btn-outline-info">View Profile</a>
-                            
-                            <a href="#" class="btn btn-sm btn-outline-warning">Edit</a>
-                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                <td>{{ user.id }}</td>
+                <td><strong>{{ user.username }}</strong></td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_admin %}
+                        <span class="badge bg-success">Admin</span>
+                    {% else %}
+                        <span class="badge bg-secondary">User</span>
+                    {% endif %}
+                <td>
+                    <span class="badge bg-secondary">
+                        {{ user.reviews|length }} reviews
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('users.profile', user_id=user.id) }}" class="btn btn-sm btn-outline-info">View Profile</a>
+                                
+                        <a href="{{ url_for('admin.edit_user', id=user.id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                
+                        <form action="{{ url_for('admin.delete_user', id=user.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Weet je zeker dat je {{ user.username }} wilt verwijderen?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
         </table>
     </div>
 </div>

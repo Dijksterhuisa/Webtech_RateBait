@@ -11,8 +11,14 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     reviews = db.relationship('Review', backref='author', lazy=True)
+    is_admin_db = db.Column(db.Boolean, default=False) # Nieuw veld om admin status bij te houden
 
-    def __init__(self, username: str, password: str, email: str):
+    @property
+    def is_admin(self):
+        """Geeft aan of de gebruiker admin rechten heeft."""
+        return self.is_admin_db
+    
+    def __init__(self, username: str, password: str, email: str, is_admin: bool):
         """Maakt een nieuw spel aan. Dit is waarschijnlijk nooit nodig.
         In:
             titel: titel van het spel
@@ -21,7 +27,8 @@ class User(db.Model,UserMixin):
         self.username = username
         self.password = generate_password_hash(password)
         self.email = email
-        
+        self.is_admin_db = is_admin
+
     def __repr__(self):
         return f"<User {self.username}>"
     

@@ -10,7 +10,11 @@
 </head>
 
 <body>
-    {% include "components/navbar.html" %}
+    {% if current_user.is_authenticated and current_user.is_admin %}
+        {% include "components/admin_navbar.html" %}
+    {% else %}
+        {% include "components/navbar.html" %}
+    {% endif %}
 
     <style>
     /* Letterboxd-stijl aanpassingen */
@@ -117,8 +121,16 @@
 
     
     a { text-decoration: none; }
+
+    .star-color { color: #ff601c; }
     </style>
     <main class="container py-4">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
         {% block content %} {% endblock %}
     </main>
 

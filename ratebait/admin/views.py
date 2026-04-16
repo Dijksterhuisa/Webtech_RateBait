@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, app, render_template, redirect, url_for, flash, request
 from ratebait.models import db, User, Review, Game
-from ratebait.admin.forms import AdminReviewForm
+from ratebait.admin.forms import AdminReviewForm, AdminUserForm
+from flask_login import current_user
+from functools import wraps
+from flask import abort
+from werkzeug.security import generate_password_hash
+
 
 # 1. Definieer de Blueprint
 # De template_folder 'templates' zorgt dat Flask in ratebait/admin/templates zoekt
@@ -9,14 +14,23 @@ admin_blueprint = Blueprint(
     __name__, 
     template_folder='templates'
 )
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 # 2. De Dashboard Route (manage.html)
 @admin_blueprint.route('/admin')
+@admin_required
 def manage():
     return render_template('manage.html')
 
 # 3. Overzicht van alle reviews (list.html)
 @admin_blueprint.route('/admin/reviews')
+@admin_required
 def list_reviews():
     # We halen alle reviews op om in de tabel te tonen
     all_reviews = Review.query.all()
@@ -24,13 +38,38 @@ def list_reviews():
 
 # 4. Overzicht van alle gebruikers (list.html hergebruikt of apart)
 @admin_blueprint.route('/admin/users')
+@admin_required
 def list_users():
     all_users = User.query.all()
     # Je kunt list.html hergebruiken of een aparte users_list.html maken
     return render_template('user_list.html', users=all_users, mode='users')
 
+# REVIEW BEWERKEN (Update)
+@admin_blueprint.route('/admin/review/edit/<int:id>', methods=['GET', 'POST'])
+@admin_required
+def edit_review(id):
+    review = db.session.get(Review, id)
+    if not review:
+        abort(404)
+        
+    # We vullen het formulier met de huidige data van de review
+    form = AdminReviewForm(obj=review)
+    
+    if form.validate_on_submit():
+        review.rating = form.rating.data
+        review.content = form.content.data
+        review.user_id = form.user_id.data
+        review.game_id = form.game_id.data
+        
+        db.session.commit()
+        flash(f"Review voor {review.game.title} is bijgewerkt!", "success")
+        return redirect(url_for('admin.list_reviews'))
+        
+    return render_template('edit_review.html', form=form, review=review)
+
 # 5. Review verwijderen - Bevestigingspagina (delete.html)
 @admin_blueprint.route('/admin/review/delete/<int:id>', methods=['GET'])
+@admin_required
 def delete_review(id):
     review = db.session.get(Review, id)
     if not review:
@@ -40,16 +79,21 @@ def delete_review(id):
 
 # 6. De eigenlijke verwijder-actie (POST request vanuit delete.html)
 @admin_blueprint.route('/admin/review/confirm_delete/<int:id>', methods=['POST'])
+@admin_required
 def confirm_delete(id):
     review = db.session.get(Review, id)
     if review:
+        game_title = review.game.title if review.game else "Onbekend Spel"
         db.session.delete(review)
         db.session.commit()
-        flash(f"Review voor {review.game.title} is verwijderd.")
+        flash(f"Review voor {game_title} is verwijderd.")
+    else:
+        flash("Review niet gevonden.", "danger")
     return redirect(url_for('admin.list_reviews'))
 
 # 7. Handmatig toevoegen (add.html)
 @admin_blueprint.route('/admin/add', methods=['GET', 'POST'])
+@admin_required
 def add_review():
     form = AdminReviewForm()
     
@@ -68,3 +112,66 @@ def add_review():
     
     # Nu stuur je 'form' eindelijk mee naar de template!
     return render_template('add.html', form=form)
+
+# GEBRUIKER BEWERKEN (Update)
+@admin_blueprint.route('/admin/user/edit/<int:id>', methods=['GET', 'POST'])
+@admin_required
+def edit_user(id):
+    user = db.session.get(User, id)
+    if not user:
+        abort(404)
+        
+    form = AdminUserForm(obj=user) # 'obj=user' vult het formulier alvast in
+    
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        #Als je de is_admin kolom hebt:
+        user.is_admin_db = form.is_admin.data
+        
+        if form.password.data:
+            user.password = generate_password_hash(form.password.data)
+            
+        db.session.commit()
+        flash(f"Gebruiker {user.username} bijgewerkt!")
+        return redirect(url_for('admin.list_users'))
+        
+    return render_template('edit_user.html', form=form, user=user)
+
+# GEBRUIKER VERWIJDEREN (Delete)
+@admin_blueprint.route('/admin/user/delete/<int:id>', methods=['POST'])
+@admin_required
+def delete_user(id):
+    if id == current_user.id:
+        flash("Je kunt jezelf niet verwijderen!")
+        return redirect(url_for('admin.list_users'))
+        
+    user = db.session.get(User, id)
+    if user:
+        for review in user.reviews:
+            db.session.delete(review)
+        db.session.delete(user)
+        db.session.commit()
+        flash("Gebruiker verwijderd.")
+    return redirect(url_for('admin.list_users'))
+
+# HANDMATIG GEBRUIKER TOEVOEGEN
+@admin_blueprint.route('/admin/user/add', methods=['GET', 'POST'])
+@admin_required
+def add_user():
+    form = AdminUserForm()
+    if form.validate_on_submit():
+        # Let op: Je User model __init__ verwacht: username, password, email, is_admin
+        # We geven hier een tijdelijk wachtwoord mee of je moet een password veld in AdminUserForm zetten
+        new_user = User(
+            username=form.username.data,
+            password="StandaardWachtwoord123!", # Of haal uit form als je dat toevoegt
+            email=form.email.data,
+            is_admin=False # Of form.is_admin.data als je die hebt
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash(f"Gebruiker {new_user.username} is toegevoegd!")
+        return redirect(url_for('admin.list_users'))
+    
+    return render_template('edit_user.html', form=form, user=None)
