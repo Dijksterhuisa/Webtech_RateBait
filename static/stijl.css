@@ -239,3 +239,22 @@ h1, h2, h3, h4, h5, p {
 .invalid-feedback {
     color: #ff601c !important;
 }
+
+/* Zorg dat het label dezelfde donkere achtergrond krijgt als het veld */
+.form-floating > label {
+    color: #6b7685 !important; /* De kleur van je placeholders */
+}
+
+/* Fix voor het witte blokje wanneer het label omhoog gaat */
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label,
+.form-floating > .form-select ~ label {
+    background-color: transparent !important; /* Verwijder de witte achtergrond */
+    color: #ff601c !important; /* Optioneel: geef het label je huisstijl-oranje kleur als het actief is */
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Zorg dat de tekstkleur van het label ook wit/grijs blijft en niet zwart wordt */
+.form-floating > label::after {
+    background-color: transparent !important;
+}
