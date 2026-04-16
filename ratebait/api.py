@@ -7,7 +7,28 @@ env_path = Path(__file__).parent / ".hidden" / ".env"
 load_dotenv(dotenv_path=env_path)
 
 IGDB_CLIENT_ID = os.getenv('IGDB_CLIENT_ID')
-IGDB_BEARER_TOKEN = os.getenv('IGDB_TOKEN')
+IGDB_CLIENT_SECRET = os.getenv('IGDB_CLIENT_SECRET')
+
+def get_access_token():
+    """Haalt een access token op van Twitch dat nodig is voor het maken van API requests naar IGDB. Deze token wordt verkregen via de Client Credentials Flow van Twitch.
+
+    Returns:
+        access_token (str): De access token die nodig is voor het maken van API requests naar IGDB
+    """
+    auth_url = "https://id.twitch.tv/oauth2/token"
+    params = {
+        "client_id": IGDB_CLIENT_ID,
+        "client_secret": IGDB_CLIENT_SECRET,
+        "grant_type": "client_credentials"
+    }
+    
+    try:
+        response = requests.post(auth_url, params=params)
+        response.raise_for_status()
+        return response.json().get("access_token")
+    except Exception as e:
+        print(f"Fout bij ophalen van token: {e}")
+        return None
 
 def get_igdb_headers():
     """ Haalt de benodigde headers op voor het maken van een API request naar IGDB. Deze bevatten de Client-ID en de Authorization token.
@@ -15,9 +36,10 @@ def get_igdb_headers():
     Returns:
         dict: Een dictionary met de benodigde headers voor IGDB API requests
     """
+    token = get_access_token()
     return {
         'Client-ID': IGDB_CLIENT_ID,
-        'Authorization': f'Bearer {IGDB_BEARER_TOKEN}'
+        'Authorization': f'Bearer {token}'
     }
 
 def search_game(query):
