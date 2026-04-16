@@ -108,25 +108,12 @@ input[type="email"]:focus {
 }
 
 
-/* Verwijder de witte border van floating inputs */
-.form-floating > .form-control:not(:placeholder-shown) {
-    border: 1px solid #444 !important;
-    background-color: #1a2129 !important;
-    color: white !important;
-}
-
 
 /* OVERRIDE autofill (Chrome geeft anders witte rand) */
 input.form-control:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px #1a2129 inset !important;
     -webkit-text-fill-color: white !important;
     border: 1px solid #444 !important;
-}
-
-
-.form-floating > .form-control:focus {
-    border: 1px solid #ff601c !important;
-    box-shadow: 0 0 0 0.2rem #ff601c40 !important;
 }
 
 
