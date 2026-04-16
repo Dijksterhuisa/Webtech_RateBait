@@ -1,0 +1,205 @@
+/* Body stijling */
+body { background: #14181c; color: white; }
+
+
+/* Stijl voor game grid */
+.game-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 25px; 
+    padding-top: 20px; 
+}
+
+
+/* Stijl voor de game kaarten */
+.game-card { 
+    background: #2c3440; 
+    padding: 10px; 
+    border-radius: 8px; 
+    text-align: center; 
+    transition: transform 0.2s, border 0.2s;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+
+/* Stijl voor de game kaarten hoveren */
+.game-card:hover { 
+    transform: scale(1.05); 
+    border: 2px solid #ff601c; 
+}
+
+
+/* Stijl voor de game kaarten images zelf */
+.game-card img { 
+    width: 100%; 
+    border-radius: 4px; 
+    margin-bottom: 10px;
+}
+
+
+/* game kaart titel onder de kaart */
+.game-card h3 { 
+    font-size: 1.1rem; 
+    margin: 0;
+    color: #fff;
+}
+
+
+/* Searchbar centreren en ruimte geven aan zoekresultaten */
+.search-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+
+/* Tekstbar wijder maken en tekst in het veld ruimte geven */
+.search-input { 
+    padding: 10px; 
+    width: 100%; 
+    max-width: 400px; 
+    border-radius: 4px; 
+}
+
+
+/* BUTTON! */
+.btn-search { 
+    padding: 10px 20px; 
+    background: #ff601c; 
+    border: none; 
+    border-radius: 4px; 
+    color: white; 
+    font-weight: bold;
+}
+
+
+/* BUTTON! but hover over BUTTON! */
+.btn-search:hover {
+    background: #B55304;
+}
+
+
+/* placeholder tekst voor invoervelden */
+::placeholder {
+color: #ccc;
+opacity: 1;
+}
+
+
+/* tekstveld kleuropmaak voor inloggen en registeren */
+.form-floating,
+input.form-control,
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    background-color: #1a2129; 
+    color: white;
+    border: 1px solid #444; 
+}
+
+
+/* Inlog en registreren velden highlight op hover */
+input.form-control:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+    border-color: #B55304;
+    box-shadow: 0 0 0 0.2rem #B55304;
+    outline: none;
+}
+
+
+/* Stijling voor flashcards */
+.alert {
+    border-radius: 6px;
+    border: 1px solid #ff601c;
+    background-color: #1a2129;
+    color: white;
+    padding: 12px 16px;
+}
+
+
+/* Stijling voor close button van flashcards */
+.alert .btn-close {
+    filter: invert(100%);
+}
+
+
+/* Geen opmaak voor linkjes, geen underline! */
+a { text-decoration: none; }
+
+
+/* Alle koppen naar wit */
+h1, h2, h3, h4, h5, p {
+    color: #ffffff;
+}
+
+/* Samenvatting tekst in game pagina */
+.lead {
+    color: #cbd5e0;
+}
+
+/* review tekst */
+.review-item p {
+    color: #e2e8f0; 
+    line-height: 1.6;
+}
+
+
+/* Placeholder tekst*/
+.form-control::placeholder {
+    color: #6b7685;
+}
+
+
+/* Foto schaduw */
+.game-poster { 
+    border-radius: 8px; 
+    border: 1px solid #444; 
+    width: 100%;
+    box-shadow: 0 4px 10px #00000080;
+}
+
+
+/* reviewbox */
+.review-card {
+    background: #2c3440;
+    border: none;
+    color: white;
+}
+
+
+/* formulier kleur */
+.form-control, .form-select {
+    background-color: #1a2129;
+    border: 1px solid #444444;
+    color: white;
+}
+
+
+/* BUTTON */
+.btn-rate {
+    background-color: #ff601c;
+    border: none;
+    font-weight: bold;
+}
+
+
+/* BUTTON, but hover */
+.btn-rate:hover {
+    background-color: #B55304;
+}
+
+
+/* review comment */
+.review-item {
+    border-bottom: 1px solid #333;
+    padding: 15px 0;
+}
+
+/* rating kleur */
+.star-color { color: #ff601c; }
+
+
+/* Meerdere teksten in de review div en comment div onder andere datum */
+.text-muted { color: #cdcdcd82 !important; }

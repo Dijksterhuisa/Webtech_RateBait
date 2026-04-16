@@ -1,8 +1,14 @@
-{% extends "base.html"%}
+<!-- Imports vanuit base.html-->
+{% extends "base.html" %}
 
-{% block title %} RateBait - Home {% endblock %}
 
+<!-- Nieuwe Titel-->
+{% block title %} RateBait - Registratie {% endblock %}
+
+
+<!-- Inhoud-->
 {% block content %}
+
 
 <!-- Flash messages -->
 {% for message in get_flashed_messages() %}
@@ -12,20 +18,17 @@
 </div>
 {% endfor %}
 
+
 <!-- Superhero landing!-->
 <div class="py-5 my-5 text-center">
   <img class="d-block mx-auto mb-4"
        src="{{ url_for('static', filename='logo/homepage_logo.png') }}"
        alt="Logo"
        width="560" height="300">
-
   <h1 class="display-5 fw-bold">RateBait</h1>
-
   <p class="lead mb-4">
-    Het ultieme dagboek voor elke gamer. Log je uren, geef je cijfer en bouw je eigen collectie op.
+    Het ultieme dagboek voor elke gamer. Geef je cijfer en bouw je eigen collectie op.
   </p>
-
-
 <div class="container text-center">
   Level up je backlog.
 </div>

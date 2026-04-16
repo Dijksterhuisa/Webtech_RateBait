@@ -1,29 +1,42 @@
+<!-- Navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
     <div class="container-fluid">
+
+
+      <!-- homebutton titel -->
       <a class="navbar-brand" href="/">RateBait</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
 
+
+      <!-- collapsable voor telefoons, thanks bootstrap-->
       <div class="collapse navbar-collapse" id="navbarNav">
 
         <!--Linkerzijde-->
         <ul class="navbar-nav">
 
+
+          <!--Homepagina-->
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
           </li>
 
+
+          <!--Rate games pagina-->
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/rategames' %}active{% endif %}" href="/rategames">Rate Games</a>
           </li>
         </ul>
         
+
         <!--Rechterzijde-->
         <ul class="navbar-nav ms-auto">
           {% if current_user.is_authenticated %}
-          <!-- Dropdown met username -->
+          
+          
+          <!-- Dropdown met username en uitloggen -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
                 <i class="bi bi-person-fill" style="color: #ff601c;"></i> {{ current_user.username }}
@@ -34,11 +47,13 @@
           </li>
           
           {% else %}
-          <!-- Als user niet is ingelogd -->
+          <!-- Wanneer een user niet is ingelogd, inloggen-->
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/login' %}active{% endif %}" href="/login">Inloggen</a>
           </li>
-
+         
+         
+          <!-- of registeren-->
           <li class="nav-item">
             <a class="nav-link {% if request.path == '/registratie' %}active{% endif %}" href="/registratie">Registreren</a>
           </li>

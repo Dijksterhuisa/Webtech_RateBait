@@ -1,44 +1,56 @@
-from flask import Flask, render_template, flash, request, redirect, url_for, Blueprint
-from wtforms import StringField, SubmitField, PasswordField
-from flask_wtf import FlaskForm
-from ratebait.models import db, Game, Review, User
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, flash, request, redirect, url_for
+from ratebait.models import db, User
 from ratebait.game.views import game_blueprint
 from ratebait.users.views import user_blueprint
 from ratebait.admin.views import admin_blueprint
 from ratebait.users.forms import RegistratieForm, LoginForm
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required
 
+
+### app met standaard template folder ###
 app = Flask(__name__, template_folder='ratebait/templates')
 
-# Registreer de blueprint
+
+### Registreer de blueprint ###
 app.register_blueprint(game_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(admin_blueprint)
 
-# CSRF-beveiliging vereist een secret key
+
+### CSRF-beveiliging vereist een secret key ###
 app.config['SECRET_KEY'] = 'mijngeheimesleutel'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+
+### Database koppeling ###
+db.init_app(app)
+
+
+### Login manager met login redirect wanneer login required ###
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
+
+### ingelogde user tracken  ###
 @login_manager.user_loader
 def load_user(user_id):
+    """ Zoekt userid op in de database"""
     return User.query.get(int(user_id))
 
-db.init_app(app)
 
+### index endpoint ###
 @app.route("/")
 def index() -> str:
-    """Homepage route."""
+    """Homepage route. Haalt de homepage op"""
     return render_template("home.html")
 
+
+### Registratie endpoint met form verwerking ###
 @app.route("/registratie", methods=["GET", "POST"])
 def registratie() -> str:
-    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
+    """ registratie voor het aanmaken van nieuwe users. Haalt data uit de formulieren op en verwerkt deze in de database"""
     username: str | bool = False
     password: str | bool = False
     email:    str | bool = False
@@ -67,21 +79,11 @@ def registratie() -> str:
     
     return render_template("registratie.html", form = form, username=username, password=password, email=email)
 
-@app.route("/users", methods=["GET", "POST"])
-def users() -> str:
-    users = db.session.execute(db.select(User.username)).scalars().all()
-    
-    return render_template('users.html', users=users)    
 
-@app.route("/reviews", methods=["GET", "POST"])
-def reviews() -> str:
-    reviews = db.session.execute(db.select(Review)).scalars().all()
-    return render_template('reviews.html', reviews=reviews)
-
-
+### login pagina met login form + flashcards ###
 @app.route("/login", methods=["GET", "POST"])
 def login() -> str:
-    """W.I.P bestemmingen pagina voor testen van navbar W.I.P"""
+    """controleert de database tegenover de data dat ingevoerd is in het formulier. gebruikt daarna flask-login om de gebruiker in te loggen en te onthouden"""
     form = LoginForm()
     next_page = request.args.get("next")
 
@@ -96,24 +98,21 @@ def login() -> str:
             flash("Ongeldige gebruikersnaam of wachtwoord", "danger")
     return render_template("login.html", form=form)
 
+
+### logout script ###
 @app.route("/logout")
 @login_required
 def logout():
+    """ Gebruikt flask-login om de gebruiker uit te loggen en niet meer te onthouden"""
     logout_user()
     flash("Je bent uitgelogd!", "info")
     return redirect(url_for("index"))
 
-@app.route("/geheim")
-@login_required
-def geheim():
-    return "Alleen zichtbaar voor ingelogde gebruikers!"
 
-
-
+### run app + maak database ###
 if __name__ == "__main__": 
     # Dit zorgt ervoor dat de tabellen worden aangemaakt als ze nog niet bestaan
     with app.app_context():
         db.create_all()
         print("Database tabellen succesvol aangemaakt!")
     app.run(debug=True)
-    
