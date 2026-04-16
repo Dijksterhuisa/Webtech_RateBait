@@ -15,8 +15,21 @@ admin_blueprint = Blueprint(
     template_folder='templates'
 )
 def admin_required(f):
+    """Een decorator die controleert of de huidige gebruiker een admin is. Als dat niet het geval is, wordt er een 403 Forbidden fout weergegeven.
+
+    Args:
+        f (function): De functie die beveiligd moet worden
+
+    Returns:
+        function: De beveiligde functie
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        """Checkt of de gebruiker admin rechten heeft. Als dat niet het geval is, wordt er een 403 Forbidden fout weergegeven.
+
+        Returns:
+            function: De beveiligde functie
+        """
         if not current_user.is_authenticated or not current_user.is_admin:
             abort(403)
         return f(*args, **kwargs)
@@ -26,12 +39,22 @@ def admin_required(f):
 @admin_blueprint.route('/admin')
 @admin_required
 def manage():
+    """Haalt het beheerpaneel op. Alleen toegankelijk voor admins.
+
+    Returns:
+        template: HTML template voor het beheerpaneel
+    """
     return render_template('manage.html')
 
 # 3. Overzicht van alle reviews (list.html)
 @admin_blueprint.route('/admin/reviews')
 @admin_required
 def list_reviews():
+    """Haalt een overzicht van alle reviews op. Alleen toegankelijk voor admins.
+
+    Returns:
+        template: HTML template voor het overzicht van reviews
+    """
     # We halen alle reviews op om in de tabel te tonen
     all_reviews = Review.query.all()
     return render_template('review_list.html', reviews=all_reviews)
@@ -40,6 +63,11 @@ def list_reviews():
 @admin_blueprint.route('/admin/users')
 @admin_required
 def list_users():
+    """Haalt een overzicht van alle gebruikers op. Alleen toegankelijk voor admins.
+
+    Returns:
+        template: HTML template voor het overzicht van gebruikers
+    """
     all_users = User.query.all()
     # Je kunt list.html hergebruiken of een aparte users_list.html maken
     return render_template('user_list.html', users=all_users, mode='users')
@@ -48,6 +76,14 @@ def list_users():
 @admin_blueprint.route('/admin/review/edit/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def edit_review(id):
+    """Haalt het formulier voor het bewerken van een review op. Alleen toegankelijk voor admins.
+
+    Args:
+        id (int): Het ID van de review die bewerkt moet worden
+
+    Returns:
+        template: HTML template voor het bewerken van een review
+    """
     review = db.session.get(Review, id)
     if not review:
         abort(404)
@@ -71,6 +107,14 @@ def edit_review(id):
 @admin_blueprint.route('/admin/review/delete/<int:id>', methods=['GET'])
 @admin_required
 def delete_review(id):
+    """Haalt de bevestigingspagina voor het verwijderen van een review op. Alleen toegankelijk voor admins.
+
+    Args:
+        id (int): Het ID van de review die verwijderd moet worden
+
+    Returns:
+        template: HTML template voor de bevestigingspagina
+    """
     review = db.session.get(Review, id)
     if not review:
         flash("Review niet gevonden.")
@@ -81,6 +125,14 @@ def delete_review(id):
 @admin_blueprint.route('/admin/review/confirm_delete/<int:id>', methods=['POST'])
 @admin_required
 def confirm_delete(id):
+    """De eigenlijke verwijder-actie voor een review. Alleen toegankelijk voor admins.
+
+    Args:
+        id (int): Het ID van de review die verwijderd moet worden
+
+    Returns:
+        template: HTML template voor de reviewlijst na verwijdering.
+    """
     review = db.session.get(Review, id)
     if review:
         game_title = review.game.title if review.game else "Onbekend Spel"
@@ -95,6 +147,11 @@ def confirm_delete(id):
 @admin_blueprint.route('/admin/add', methods=['GET', 'POST'])
 @admin_required
 def add_review():
+    """Haalt het formulier voor het toevoegen van een review op. Alleen toegankelijk voor admins.
+
+    Returns:
+        template: HTML template voor het toevoegen van een review
+    """
     form = AdminReviewForm()
     
     if form.validate_on_submit():
@@ -117,6 +174,14 @@ def add_review():
 @admin_blueprint.route('/admin/user/edit/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def edit_user(id):
+    """Haalt het formulier voor het bewerken van een gebruiker op. Alleen toegankelijk voor admins.
+
+    Args:
+        id (int): Het ID van de gebruiker die bewerkt moet worden
+
+    Returns:
+        template: HTML template voor het bewerken van een gebruiker
+    """
     user = db.session.get(User, id)
     if not user:
         abort(404)
@@ -142,6 +207,14 @@ def edit_user(id):
 @admin_blueprint.route('/admin/user/delete/<int:id>', methods=['POST'])
 @admin_required
 def delete_user(id):
+    """Function die een gebruiker verwijdert. Alleen toegankelijk voor admins.
+
+    Args:
+        id (int): Het ID van de gebruiker die verwijderd moet worden
+
+    Returns:
+        template: HTML template voor de gebruikerslijst na verwijdering
+    """
     if id == current_user.id:
         flash("Je kunt jezelf niet verwijderen!")
         return redirect(url_for('admin.list_users'))
@@ -159,6 +232,11 @@ def delete_user(id):
 @admin_blueprint.route('/admin/user/add', methods=['GET', 'POST'])
 @admin_required
 def add_user():
+    """Haalt het formulier voor het toevoegen van een gebruiker op. Alleen toegankelijk voor admins.
+
+    Returns:
+        template: HTML template voor het toevoegen van een gebruiker
+    """
     form = AdminUserForm()
     if form.validate_on_submit():
         # Let op: Je User model __init__ verwacht: username, password, email, is_admin

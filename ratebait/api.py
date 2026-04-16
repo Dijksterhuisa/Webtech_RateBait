@@ -10,12 +10,25 @@ IGDB_CLIENT_ID = os.getenv('IGDB_CLIENT_ID')
 IGDB_BEARER_TOKEN = os.getenv('IGDB_TOKEN')
 
 def get_igdb_headers():
+    """ Haalt de benodigde headers op voor het maken van een API request naar IGDB. Deze bevatten de Client-ID en de Authorization token.
+
+    Returns:
+        dict: Een dictionary met de benodigde headers voor IGDB API requests
+    """
     return {
         'Client-ID': IGDB_CLIENT_ID,
         'Authorization': f'Bearer {IGDB_BEARER_TOKEN}'
     }
 
 def search_game(query):
+    """ Zoekt naar games op basis van een zoekterm.
+
+    Args:
+        query (str): De zoekterm voor het zoeken naar games
+
+    Returns:
+        list: Een lijst met game-gegevens die overeenkomen met de zoekterm
+    """
     url = "https://api.igdb.com/v4/games"
     # ADDED 'id' to the fields we are requesting
     body = f'search "{query}"; fields id, name, cover.url, summary; limit 10;'
@@ -29,7 +42,14 @@ def search_game(query):
         return None
 
 def get_game_by_id(game_id):
-    """Fetches a single game's details by its IGDB ID."""
+    """ Haalt de details van een enkele game op basis van zijn IGDB ID.
+
+    Args:
+        game_id (int): Het IGDB ID van de game wiens details opgehaald moeten worden
+
+    Returns:
+        dict: Een dictionary met de details van de game
+    """
     url = "https://api.igdb.com/v4/games"
     body = f'fields id, name, cover.url, summary, first_release_date; where id = {game_id};'
     
@@ -43,6 +63,15 @@ def get_game_by_id(game_id):
         return None
         
 def format_cover_url(raw_url):
+    """ Haalt de cover URL op en formatteert deze zodat we een grotere versie van de cover kunnen tonen. Als er geen cover is, geeft het een placeholder afbeelding terug.
+
+    Args:
+        raw_url (str): De onbewerkte cover URL
+
+    Returns:
+        str: De geformatteerde cover URL
+    """
+    
     if not raw_url:
         return "https://via.placeholder.com/264x352?text=No+Cover"
     return "https:" + raw_url.replace('t_thumb', 't_cover_big')

@@ -9,6 +9,11 @@ game_blueprint = Blueprint('game', __name__)
 
 @game_blueprint.route('/rategames', methods=['GET', 'POST'])
 def rategames():
+    """Haalt de rategames pagina op. Bij een POST request wordt er gezocht naar games op basis van de zoekterm en worden deze weergegeven op de pagina.
+
+    Returns:
+        template: HTML template met zoekresultaten van games
+    """
     games = []
     query = ""
     
@@ -34,6 +39,14 @@ def rategames():
 
 @game_blueprint.route('/game/<int:game_id>')
 def game_detail(game_id):
+    """Haalt de detailpagina van een game op. Deze pagina toont de details van de game, een formulier om een review toe te voegen, en de bestaande reviews voor die game.
+
+    Args:
+        game_id (int): Het IGDB ID van de game wiens detailpagina opgehaald moet worden
+
+    Returns:
+        template: HTML template voor de detailpagina van een game
+    """
     game_data = get_game_by_id(game_id)
     if not game_data:
         return "Game not found", 404
@@ -48,6 +61,14 @@ def game_detail(game_id):
 
 @game_blueprint.route('/game/<int:game_id>/review', methods=['POST'])
 def add_review(game_id):
+    """Laat een formulier zien om een review toe te voegen aan een game. Alleen toegankelijk voor ingelogde gebruikers.
+
+    Args:
+        game_id (int): Het IGDB ID van de game wiens review toegevoegd moet worden
+
+    Returns:
+        template: HTML template voor het toevoegen van een review
+    """
     form = ReviewForm()
     
     if form.validate_on_submit():
@@ -60,6 +81,7 @@ def add_review(game_id):
             db.session.add(game)
             db.session.commit()
         
+        # We gebruiken current_user van Flask-Login om de ingelogde gebruiker te krijgen
         user = current_user if current_user.is_authenticated else None
         if not user:
             flash("Je moet ingelogd zijn om een review toe te voegen.", "warning")

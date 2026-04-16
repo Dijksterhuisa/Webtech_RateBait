@@ -14,6 +14,14 @@ user_blueprint = Blueprint(
 @user_blueprint.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    """Laadt het profiel van een gebruiker, inclusief hun reviews. Alleen toegankelijk voor de eigenaar of admins.
+
+    Args:
+        user_id (int): ID van de gebruiker wiens profiel opgehaald moet worden
+
+    Returns:
+        template: HTML template voor het profiel van een gebruiker
+    """
     # Haal de gebruiker op, of geef een 404 als hij niet bestaat
     user = db.session.get(User, user_id)
     if not user:
@@ -28,6 +36,14 @@ def profile(user_id):
 @user_blueprint.route('/review/edit/<int:review_id>', methods=['GET', 'POST'])
 @login_required
 def edit_my_review(review_id):
+    """ Laat een formulier zien om een review te bewerken. Alleen toegankelijk voor de eigenaar van de review of admins.
+
+    Args:
+        review_id (int): ID van de review die bewerkt moet worden
+
+    Returns:
+        template: HTML template voor het bewerken van een review
+    """
     review = db.session.get(Review, review_id)
     
     if not review:
@@ -50,6 +66,14 @@ def edit_my_review(review_id):
 @user_blueprint.route('/review/delete/<int:review_id>', methods=['POST'])
 @login_required
 def delete_my_review(review_id):
+    """ Verwijdert een review. Alleen toegankelijk voor de eigenaar van de review of admins.
+
+    Args:
+        review_id (int): ID van de review die verwijderd moet worden
+
+    Returns:
+        redirect: Redirect naar het profiel van de gebruiker
+    """
     review = db.session.get(Review, review_id)
     
     if not review:
